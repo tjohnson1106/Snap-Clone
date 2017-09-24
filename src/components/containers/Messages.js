@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Text, FlatList, TouchableOpacity } from 'react-native';
+import { AddMessage } from '../presentation/';
 
 class Messages extends Component {
 
@@ -15,6 +16,11 @@ class Messages extends Component {
             ]
         }
     }
+
+    addMessage(){
+        alert('Message Added')
+    }
+
 
     _renderMessage(item) {
         return (
@@ -33,11 +39,15 @@ class Messages extends Component {
 
     render() {
         return (
+            <View style={styles.main}>
             <FlatList
+                keyExtractor={(item)=>item.id}
                 style={StyleSheet.main}
                 data={this.state.messages}
                 renderItem={({ item }) => this._renderMessage(item)}
             />
+            <AddMessage addMessage={()=>this.addMessage()}/>
+            </View>
 
         )
     }
@@ -45,7 +55,8 @@ class Messages extends Component {
 
 const styles=StyleSheet.create({
     main:{
-
+        width:100+'%', 
+        height:100+'%'
     },
     message:{
         width:100+'%',
@@ -53,7 +64,10 @@ const styles=StyleSheet.create({
         borderColor: 'rgb(71,77,89)'
     },
     messageText:{
-        color: 'rgb(71,77,89)'
+        color: 'rgb(12,0,51)',
+        fontFamily:'helvetica',
+        fontSize: 14
+
     }
 })
 
