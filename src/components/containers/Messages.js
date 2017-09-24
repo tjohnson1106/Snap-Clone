@@ -10,19 +10,28 @@ class Messages extends Component {
         super()
         this.state = {
             messages: [
-                { id: 1, from: 'Mom', content: 'Tough birth' },
-                { id: 2, from: 'Father', content: 'LOL X 3' },
-                { id: 3, from: 'Puppet', content: 'Let me get that' },
-                { id: 4, from: 'Lydia', content: 'what up' },
-                { id: 5, from: 'Trump', content: 'Youre fucked' }
             ]
         }
     }
 
-    addMessage(){
-        Turbo({site_id: config.TURBO_APP_ID}).create('message', { id: 5, from: 'Trump', content: 'Youre fucked' })
+    componentDidMount(){
+        Turbo({site_id: config.TURBO_APP_ID}).fetch('message')
         .then((data)=>{
-            alert(JSON.stringify(data))
+            this.setState({
+                messages: data
+            })
+        })
+    }
+
+    addMessage(){
+        Turbo({site_id: config.TURBO_APP_ID}).create('message', { id: 5, from: 'Trump', content: 'Youre really really fucked' })
+        .then((data)=>{
+            let newMessages = Object.assign([], this.state.messages)
+            newMessages.push(data)
+            this.setState({
+                messages: newMessages
+
+            })
         })
         .catch((err)=>{
             alert(err.message)
