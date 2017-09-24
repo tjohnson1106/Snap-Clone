@@ -6,7 +6,7 @@ class AddMessage extends Component{
     render(){
         return(
             <TouchableOpacity 
-            onPress={this.props.AddMessage}
+            onPress={this.props.addMessage}
             style={styles.circle}>
                 <Image source={config.images.plus}/>
              </TouchableOpacity>

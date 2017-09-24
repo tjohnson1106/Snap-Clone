@@ -1,6 +1,8 @@
-import React, { Component } from 'react';
-import { View, StyleSheet, Text, FlatList, TouchableOpacity } from 'react-native';
-import { AddMessage } from '../presentation/';
+import React, { Component } from 'react'
+import { View, StyleSheet, Text, FlatList, TouchableOpacity } from 'react-native'
+import { AddMessage } from '../presentation/'
+import Turbo from 'turbo360'
+import config from '../../config'
 
 class Messages extends Component {
 
@@ -8,8 +10,8 @@ class Messages extends Component {
         super()
         this.state = {
             messages: [
-                { id: 1, from: 'Mom', content: 'How are you' },
-                { id: 2, from: 'Father', content: 'Hello' },
+                { id: 1, from: 'Mom', content: 'Tough birth' },
+                { id: 2, from: 'Father', content: 'LOL X 3' },
                 { id: 3, from: 'Puppet', content: 'Let me get that' },
                 { id: 4, from: 'Lydia', content: 'what up' },
                 { id: 5, from: 'Trump', content: 'Youre fucked' }
@@ -18,7 +20,14 @@ class Messages extends Component {
     }
 
     addMessage(){
-        alert('Message Added')
+        Turbo({site_id: config.TURBO_APP_ID}).create('message', { id: 5, from: 'Trump', content: 'Youre fucked' })
+        .then((data)=>{
+            alert(JSON.stringify(data))
+        })
+        .catch((err)=>{
+            alert(err.message)
+        })
+    
     }
 
 
