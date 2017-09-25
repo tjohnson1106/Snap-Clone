@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, StyleSheet, Text, FlatList, TouchableOpacity } from 'react-native'
+import { View, StyleSheet, Text, FlatList, TouchableOpacity, Modal } from 'react-native'
 import { AddMessage } from '../presentation/'
 import Turbo from 'turbo360'
 import config from '../../config'
@@ -10,21 +10,23 @@ class Messages extends Component {
         super()
         this.state = {
             messages: [
-            ]
+            ],
+            modalVisible: true
         }
     }
 
     componentDidMount(){
-        Turbo({site_id: config.TURBO_APP_ID}).fetch('message')
+        Turbo({site_id: config.TURBO_APP_ID}).fetch('message', {for: 'Trump'})
         .then((data)=>{
             this.setState({
-                messages: data
+                messages: data,
+
             })
         })
     }
 
     addMessage(){
-        Turbo({site_id: config.TURBO_APP_ID}).create('message', { id: 5, from: 'Trump', content: 'Youre really really fucked' })
+        Turbo({site_id: config.TURBO_APP_ID}).create('message', { id: 5, for: 'Puppet', from: 'Trump', content: 'Youre really really fucked' })
         .then((data)=>{
             let newMessages = Object.assign([], this.state.messages)
             newMessages.push(data)
@@ -58,6 +60,16 @@ class Messages extends Component {
     render() {
         return (
             <View style={styles.main}>
+                <Modal
+                  transparent={true}
+                  visible={this.state.modalVisible}>
+                  <View style={styles.modal}>
+                      <View style={styles.login}>
+
+                      </View>
+
+                  </View>
+                 </Modal>
             <FlatList
                 keyExtractor={(item)=>item.id}
                 style={StyleSheet.main}
@@ -86,6 +98,16 @@ const styles=StyleSheet.create({
         fontFamily:'helvetica',
         fontSize: 14
 
+    },
+    modal: {
+        width:100+'%',
+        height:100+'%',
+        backgroundColor:'rgba(0,0,0,.85)'
+    },
+    login: { 
+        width:90+'%',
+        height:50+'%',
+        backgroundColor: 'rgb(225,255,255)'
     }
 })
 
