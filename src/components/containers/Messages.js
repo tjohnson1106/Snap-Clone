@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, StyleSheet, Text, FlatList, TouchableOpacity, Modal } from 'react-native'
+import { View, StyleSheet, Text, FlatList, TouchableOpacity, Modal, TextInput } from 'react-native'
 import { AddMessage } from '../presentation/'
 import Turbo from 'turbo360'
 import config from '../../config'
@@ -11,24 +11,28 @@ class Messages extends Component {
         this.state = {
             messages: [
             ],
-            modalVisible: true
+            modalVisible: true,
+            login: {
+                username:'',
+                Password:''
+            },
+            currentUser: null
         }
     }
 
     componentDidMount(){
-        Turbo({site_id: config.TURBO_APP_ID}).fetch('message', {for: 'Trump'})
+        Turbo({site_id: config.TURBO_APP_ID}).fetch('message', {for: 'Puppet'})
         .then((data)=>{
             this.setState({
                 messages: data,
-
             })
         })
     }
 
     addMessage(){
-        Turbo({site_id: config.TURBO_APP_ID}).create('message', { id: 5, for: 'Puppet', from: 'Trump', content: 'Youre really really fucked' })
+        Turbo({site_id: config.TURBO_APP_ID}).create('message', { id: 4, for: 'Puppet', from: 'Trump', content: 'Youre really really fucked' })
         .then((data)=>{
-            let newMessages = Object.assign([], this.state.messages)
+            let newMessages = Object.assign([],this.state.messages)
             newMessages.push(data)
             this.setState({
                 messages: newMessages
@@ -39,6 +43,37 @@ class Messages extends Component {
             alert(err.message)
         })
     
+    }
+
+    loginUpdated(text, key){
+        let newLogin = Object.assign({}, this.state.login)
+        newLogin[key] = text
+        this.setState({
+            login: newLogin
+        })
+    }
+
+    loginSubmitted(){
+        let message = null
+        Turbo({site_id: config.TURBO_APP_ID}).fetch('user', {username: this.state.login.username})
+        .then((data=>{
+            if(data.length===0){
+                message = "Register success: "
+                return Turbo({site_id: config.TURBO_APP_ID}).createUser(this.state.login)
+            }else{
+                message = "Login success: "
+                return Turbo({site_id: config.TURBO_APP_ID}).login(this.state.login)
+            }
+        }))
+        .then((data)=>{
+            this.setState({
+                currentUser: data.id,
+                modalVisible: false
+            })
+        })
+        .catch((err)=>{
+            alert(err.message)
+        })
     }
 
 
@@ -65,7 +100,15 @@ class Messages extends Component {
                   visible={this.state.modalVisible}>
                   <View style={styles.modal}>
                       <View style={styles.login}>
-
+                          <Text>Login / Signup</Text>
+                          <Text>Username</Text>
+                          <TextInput onChangeText={(text)=>this.loginUpdated(text, 'username')}/>
+                          <Text>Password</Text>
+                          <TextInput onChangeText={(text)=>this.loginUpdated(text, 'password')}/>
+                          <TouchableOpacity onPress={()=>this.loginSubmitted()}>
+                              <Text>SUBMIT</Text>
+                          </TouchableOpacity>
+                          
                       </View>
 
                   </View>
@@ -102,11 +145,13 @@ const styles=StyleSheet.create({
     modal: {
         width:100+'%',
         height:100+'%',
-        backgroundColor:'rgba(0,0,0,.85)'
+        backgroundColor:'rgba(0,0,0,.85)',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     login: { 
-        width:90+'%',
-        height:50+'%',
+        width:80+'%',
+        height:30+'%',
         backgroundColor: 'rgb(225,255,255)'
     }
 })
